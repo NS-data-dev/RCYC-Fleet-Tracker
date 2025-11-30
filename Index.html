@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Luminara Live Map</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- MyShipTracking widget config -->
+  <script>
+    // Size of the map inside the page
+    var mst_width = "100%";
+    var mst_height = "600px";
+    var mst_border = "0";
+
+    // Map style and vessel
+    var mst_map_style = "simple";
+    var mst_mmsi = "249161000";      // Ritz-Carlton Luminara MMSI
+    var mst_show_track = "true";
+    var mst_show_info = "true";
+
+    // Optional settings
+    var mst_fleet = "";
+    var mst_lat = "";
+    var mst_lng = "";
+    var mst_zoom = "";
+    var mst_show_names = "1";
+    var mst_scroll_wheel = "false";
+    var mst_show_menu = "0";
+  </script>
+
+  <!-- MyShipTracking map script -->
+  <script id="myshiptrackingscript"
+          src="//www.myshiptracking.com/js/widgetApi.js"
+          async
+          defer></script>
+</body>
+</html>
