@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>RCYC Fleet Tracker</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --card: #141a30;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #111827 0, var(--bg) 55%);
+      color: var(--text);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px 28px;
+      max-width: 520px;
+      width: 92%;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.4rem;
+      letter-spacing: 0.03em;
+    }
+
+    p {
+      margin: 0 0 18px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .fleet {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    a.ship {
+      text-decoration: none;
+      background: #111827;
+      border-radius: 12px;
+      padding: 10px 14px;
+      border: 1px solid rgba(156, 163, 175, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease,
+        border-color 0.12s ease, background 0.12s ease;
+    }
+
+    a.ship span.name {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    a.ship span.label {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    a.ship:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      background: #020617;
+    }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>RCYC Fleet Tracker</h1>
+    <p>Select a yacht to open its live MyShipTracking map.</p>
+
+    <div class="fleet">
+      <a class="ship" href="evrima.html">
+        <span class="name">Evrima</span>
+        <span class="label">MMSI 215001000</span>
+      </a>
+      <a class="ship" href="ilma.html">
+        <span class="name">Ilma</span>
+        <span class="label">MMSI 256343000</span>
+      </a>
+      <a class="ship" href="luminara.html">
+        <span class="name">Luminara</span>
+        <span class="label">MMSI 249161000</span>
+      </a>
+    </div>
+
+    <div class="footer">
+      Uses free AIS data from MyShipTracking; mid-ocean positions may be delayed.
+    </div>
+  </div>
+</body>
+</html>
