@@ -1,43 +1,98 @@
-<script>
-  var mst_width = "100%";
-  var mst_height = "520px";
-  var mst_border = "0";
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ship Tracker</title>
+  <style>
+    html, body { margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    .wrap { padding: 10px 12px; }
+    .title { font-weight: 700; }
+    .muted { opacity: 0.7; font-size: 12px; margin-top: 4px; }
+    #map { height: 520px; }
+    #fallback { display: none; padding: 14px 12px; }
+    .btn {
+      display: inline-block; margin-top: 10px; padding: 10px 12px;
+      border: 1px solid #ddd; border-radius: 10px; text-decoration: none; color: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title" id="shipTitle"></div>
+    <div class="muted" id="status">Loading latest position…</div>
+  </div>
 
-  var mst_map_style = "simple";
-  var mst_mmsi = "215001000"; // change per page
-  var mst_show_track = "true";
-  var mst_show_info = "true";
+  <div id="map"></div>
 
-  var mst_fleet = "";
-  var mst_lat = "";
-  var mst_lng = "";
-  var mst_zoom = "6";
-  var mst_show_names = "1";
-  var mst_scroll_wheel = "false";
-  var mst_show_menu = "0";
+  <div id="fallback">
+    <div><strong>Live map unavailable right now.</strong></div>
+    <div class="muted">This provider occasionally returns an internal error. Try again later.</div>
+    <a class="btn" id="fallbackLink" target="_blank" rel="noopener">Open external tracker</a>
+  </div>
 
-  function loadMST(tryNo) {
-    // remove old script if present
-    const old = document.getElementById("myshiptrackingscript");
-    if (old) old.remove();
+  <script>
+    // ========= CHANGE THESE PER PAGE =========
+    const SHIP_NAME = "Evrima";
+    const MMSI = "215001000";
+    const FALLBACK_URL = "https://www.myshiptracking.com/"; // put your preferred direct link
+    // ========================================
 
-    const s = document.createElement("script");
-    s.id = "myshiptrackingscript";
-    s.src = "https://www.myshiptracking.com/js/widgetApi.js?cb=" + Date.now();
-    s.onload = () => {
-      // If MST returns an internal error page, retry once after a short delay
+    document.getElementById("shipTitle").textContent = SHIP_NAME;
+    document.getElementById("fallbackLink").href = FALLBACK_URL;
+
+    // MyShipTracking config
+    var mst_width = "100%";
+    var mst_height = "520px";
+    var mst_border = "0";
+    var mst_map_style = "simple";
+    var mst_mmsi = MMSI;
+    var mst_show_track = "true";
+    var mst_show_info = "true";
+    var mst_fleet = "";
+    var mst_lat = "";
+    var mst_lng = "";
+    var mst_zoom = "6";
+    var mst_show_names = "1";
+    var mst_scroll_wheel = "false";
+    var mst_show_menu = "0";
+
+    function showFallback(msg) {
+      document.getElementById("status").textContent = msg || "Live map unavailable.";
+      document.getElementById("map").style.display = "none";
+      document.getElementById("fallback").style.display = "block";
+    }
+
+    // Load widget script (explicit https; no async/defer)
+    (function loadWidget() {
+      const s = document.createElement("script");
+      s.id = "myshiptrackingscript";
+      s.src = "https://www.myshiptracking.com/js/widgetApi.js";
+
+      s.onload = () => {
+        // Give the widget a moment to render, then detect the known server-error text
+        setTimeout(() => {
+          const text = (document.body.innerText || "").toLowerCase();
+          if (text.includes("internal server error") || text.includes("cannot be displayed")) {
+            showFallback("Provider returned an internal server error.");
+          } else {
+            document.getElementById("status").textContent = "Showing latest known position.";
+          }
+        }, 1200);
+      };
+
+      s.onerror = () => showFallback("Could not load tracking widget.");
+      document.body.appendChild(s);
+
+      // Hard timeout: if it hangs, don’t keep a blank page
       setTimeout(() => {
-        const txt = (document.body.innerText || "").toLowerCase();
-        if (txt.includes("internal server error") && tryNo < 2) {
-          location.reload();
+        const text = (document.body.innerText || "").toLowerCase();
+        const mapVisible = document.getElementById("map").offsetHeight > 0;
+        if (mapVisible && (text.includes("loading latest position") || text.includes("internal server error"))) {
+          showFallback("Timed out loading live map.");
         }
-      }, 1500);
-    };
-    s.onerror = () => {
-      if (tryNo < 2) setTimeout(() => loadMST(tryNo + 1), 1500);
-    };
-    document.body.appendChild(s);
-  }
-
-  window.addEventListener("load", () => loadMST(1));
-</script>
+      }, 12000);
+    })();
+  </script>
+</body>
+</html>
