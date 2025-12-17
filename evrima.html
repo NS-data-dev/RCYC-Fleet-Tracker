@@ -2,19 +2,24 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Evrima Live Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ship Live Map</title>
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; }
+    html, body { margin: 0; padding: 0; height: 100%; font-family: system-ui, sans-serif; }
+    #status { padding: 10px 12px; font-size: 14px; }
   </style>
 </head>
 <body>
+  <div id="status">Loading map…</div>
+
   <script>
+    // --- MyShipTracking widget config ---
     var mst_width = "100%";
     var mst_height = "520px";
     var mst_border = "0";
 
     var mst_map_style = "simple";
-    var mst_mmsi = "215001000";      // Evrima
+    var mst_mmsi = "215001000"; // <-- CHANGE PER PAGE
     var mst_show_track = "true";
     var mst_show_info = "true";
 
@@ -25,10 +30,41 @@
     var mst_show_names = "1";
     var mst_scroll_wheel = "false";
     var mst_show_menu = "0";
-  </script>
 
-  <script id="myshiptrackingscript"
-          src="//www.myshiptracking.com/js/widgetApi.js"
-          async defer></script>
+    // --- Robust script loader + timeout diagnostics ---
+    (function () {
+      const statusEl = document.getElementById("status");
+      let loaded = false;
+
+      const s = document.createElement("script");
+      s.id = "myshiptrackingscript";
+
+      // IMPORTANT: use explicit https (avoid protocol/mixed-content weirdness)
+      s.src = "https://www.myshiptracking.com/js/widgetApi.js"; // :contentReference[oaicite:1]{index=1}
+
+      s.onload = () => {
+        loaded = true;
+        statusEl.textContent = "Map script loaded. If the map is still blank, it’s being blocked downstream (privacy/adblock/mixed content).";
+        // Optional: hide this once you confirm it works
+        // statusEl.style.display = "none";
+      };
+
+      s.onerror = () => {
+        statusEl.innerHTML =
+          "Could not load MyShipTracking (blocked or unreachable). " +
+          "Try Incognito / disable adblock. " +
+          "Fallback: open the ship directly on MyShipTracking.";
+      };
+
+      document.body.appendChild(s);
+
+      // Hard timeout so the page never “hangs” forever
+      setTimeout(() => {
+        if (!loaded) {
+          statusEl.textContent = "Still loading after 12s — likely blocked/unreachable from your network. Try Incognito / disable adblock.";
+        }
+      }, 12000);
+    })();
+  </script>
 </body>
 </html>
